@@ -6,4 +6,7 @@ public class Plane extends Body {
         this.applyForce(new Vector2(x*1000, y*1000));
         this.getTransform().setRotation(0);
     }
+    public void attack(Bullet bullet) {
+
+    }
 }
