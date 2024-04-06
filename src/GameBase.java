@@ -1,16 +1,9 @@
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.dyn4j.dynamics.Settings;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.dynamics.contact.ContactAdapter;
-import org.dyn4j.dynamics.contact.ContactListener;
-import org.dyn4j.dynamics.contact.ContactPoint;
 import org.dyn4j.geometry.*;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameBase implements Runnable {
     public static final int TICKRATE = 280;
@@ -65,14 +58,14 @@ public class GameBase implements Runnable {
     }
 
     public void testPlayer() {
-        Rectangle rect1 = drawer.formRect(10., 50., new Vector2(25, 25), Color.BLUE);
-        Rectangle rect2 = drawer.formRect(50., 10., new Vector2(25, 25), Color.BLUE);
-        Rectangle rect3 = drawer.formRect(30., 10., new Vector2(25, 45), Color.GRAY);
-
-        Convex[] fixtures = new Convex[3];
-        fixtures[0] = rect1;
-        fixtures[1] = rect2;
-        fixtures[2] = rect3;
+        Rectangle rect1 = drawer.formRect(10., 30., new Vector2(25, 15), Color.DARKVIOLET);
+        Rectangle rect2 = drawer.formRect(45., 10., new Vector2(25, 20), Color.DARKVIOLET);
+        Rectangle rect3 = drawer.formRect(15., 10., new Vector2(30, 35), Color.DARKVIOLET);
+        Rectangle rect4 = drawer.formRect(15., 10., new Vector2(20, 35), Color.DARKVIOLET);
+        rect3.rotate(Math.toRadians(30), rect3.getCenter());
+        rect4.rotate(Math.toRadians(330), rect4.getCenter());
+        Circle circ2 = drawer.formCircle(5., new Vector2(25, 0), Color.DARKVIOLET);
+        Convex[] fixtures = {rect1, rect2, rect3, rect4, circ2};
         addPlane(testPlane, 250, 250, fixtures);
         testPlane.setLinearVelocity(0, 0);
         testPlane.setMass(MassType.FIXED_ANGULAR_VELOCITY);

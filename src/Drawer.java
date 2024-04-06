@@ -5,7 +5,6 @@ import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.*;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Drawer {
     HashMap<Convex, Color> colorMap = new HashMap<>();
@@ -40,7 +39,7 @@ public class Drawer {
             graphicsContext.setFill(colorMap.getOrDefault(shape, Color.BLACK));
             if (shape instanceof Circle) {
                 Circle circle = (Circle) shape;
-                Vector2 center = body.getWorldCenter().add(circle.getCenter());
+                Vector2 center = body.getWorldCenter().add(circle.getCenter()).subtract(body.getLocalCenter());
                 double radius = circle.getRadius();
                 graphicsContext.fillOval(center.x - radius, center.y - radius, radius * 2, radius * 2);
             } else if (shape instanceof Segment) {
