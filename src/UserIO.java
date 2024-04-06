@@ -1,5 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -17,7 +18,7 @@ public class UserIO extends Application {
     private Canvas canvas = new Canvas(1280, 720);
     private Group root = new Group(canvas);
     private Scene scene = new Scene(root, 1280, 720);
-    static boolean[] movement = {false, false, false, false, false};
+    volatile static boolean[] movement = {false, false, false, false, false};
     private GraphicsContext gc;
     GameBase base = new GameBase(height, width);
 
@@ -74,7 +75,6 @@ public class UserIO extends Application {
         primaryStage.show();
         Thread gameThread = new Thread(base);
         gameThread.start();
-
 
 
         new AnimationTimer() {

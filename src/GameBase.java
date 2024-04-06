@@ -1,5 +1,6 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import org.dyn4j.dynamics.Settings;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -21,13 +22,20 @@ public class GameBase implements Runnable{
     Drawer drawer = new Drawer();
     private boolean running = true;
     volatile Body Edge;
+    private boolean[] wasPressed = {false, false, false, false};
+    private boolean[] wasReleased = {false, false, false, false};
+
+
+
 
 
     public GameBase(int height, int width) {
         testPlayer();
         setEdge(height, width);
-        world.setGravity(new Vector2(0.0, 9.81));
-
+        world.setGravity(new Vector2(0.0, 0));
+        Settings set = new Settings();
+        set.setMaximumTranslation(6.5);
+        world.setSettings(set);
     }
 
     @Override
@@ -38,7 +46,6 @@ public class GameBase implements Runnable{
                 long now = System.nanoTime();
                 if ((now - lastTime) > NSPERTICK) {
                     update();
-
                     lastTime += NSPERTICK;
                 }
             }
@@ -52,12 +59,11 @@ public class GameBase implements Runnable{
         Vector2 bottomRight = new Vector2(width, height);
 
         Edge = new Body();
-        Edge.addFixture(new Segment(topLeft, topRight), 0.1, 0.0, 1);
-        Edge.addFixture(new Segment(bottomLeft, bottomRight), 0.1, 0.0, 1);
-        Edge.addFixture(new Segment(topLeft, bottomLeft), 0.1, 0.0, 1);
-        Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 1);
+        Edge.addFixture(new Segment(topLeft, topRight), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(bottomLeft, bottomRight), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(topLeft, bottomLeft), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 0);
         Edge.setMass(MassType.INFINITE);
-
         world.addBody(Edge);
 
     }
@@ -72,16 +78,20 @@ public class GameBase implements Runnable{
         fixtures[1] = rect2;
         fixtures[2] = rect3;
         addPlane(testPlane, 250, 250, fixtures);
+        testPlane.setLinearVelocity(0, 0);
         testPlane.setMass(MassType.FIXED_ANGULAR_VELOCITY);
-        testPlane.setGravityScale(1);
+        testPlane.setActive(true);
 
 
 
     }
     public void update() {
 
-        world.update(NSPERTICK);
+
+
+
         playerMove();
+        world.update(NSPERTICK);
 
 
 
@@ -120,7 +130,6 @@ public class GameBase implements Runnable{
             testPlane.move(x, y);
 
         }
-
     }
 
 }
