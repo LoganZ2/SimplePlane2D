@@ -8,7 +8,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.Group;
-import org.dyn4j.geometry.Vector2;
 
 
 public class UserIO extends Application {
@@ -20,8 +19,6 @@ public class UserIO extends Application {
     static boolean[] movement = {false, false, false, false, false};
     private GraphicsContext gc;
     GameBase base = new GameBase(height, width);
-
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -72,10 +69,9 @@ public class UserIO extends Application {
         primaryStage.setTitle("Simple Plane 2D");
         primaryStage.setScene(scene);
         primaryStage.show();
+
         Thread gameThread = new Thread(base);
         gameThread.start();
-
-
 
         new AnimationTimer() {
             @Override
@@ -90,10 +86,7 @@ public class UserIO extends Application {
 
 
 
-
-
     public static void main(String[] args) {
         launch(args);
-
     }
 }
