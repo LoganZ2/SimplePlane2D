@@ -22,13 +22,8 @@ public class UserIO extends Application {
     private GraphicsContext gc;
     GameBase base = new GameBase(height, width);
 
-
-
     @Override
     public void start(Stage primaryStage) {
-
-
-
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case UP:
@@ -76,7 +71,6 @@ public class UserIO extends Application {
         Thread gameThread = new Thread(base);
         gameThread.start();
 
-
         new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -88,12 +82,7 @@ public class UserIO extends Application {
         }.start();
     }
 
-
-
-
-
     public static void main(String[] args) {
         launch(args);
-
     }
 }

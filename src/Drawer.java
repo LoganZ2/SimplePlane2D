@@ -27,15 +27,12 @@ public class Drawer {
         seg.translate(translation);
         return seg;
     }
-
     public Polygon formPolygon(Vector2[] vectorList, Vector2 translation, Color color) {
         Polygon poly = new Polygon(vectorList);
         colorMap.put(poly, color);
         poly.translate(translation);
         return poly;
     }
-
-
     public void draw(Body body, GraphicsContext graphicsContext) {
         List<BodyFixture> fixtures = body.getFixtures();
         for (BodyFixture fixture : fixtures) {
@@ -61,7 +58,6 @@ public class Drawer {
                     xPoints[i] = worldVertex.x;
                     yPoints[i] = worldVertex.y;
                 }
-
                 graphicsContext.fillPolygon(xPoints, yPoints, vertices.length);
             }
         }

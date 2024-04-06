@@ -11,8 +11,6 @@ public class Plane extends Body {
             this.applyForce(new Vector2(0, y * 5000));
         }
     }
-
     public void attack(Bullet bullet) {
-
     }
 }

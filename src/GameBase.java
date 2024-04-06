@@ -12,21 +12,18 @@ import org.dyn4j.geometry.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameBase implements Runnable{
+public class GameBase implements Runnable {
     public static final int TICKRATE = 280;
     public static final double NSPERTICK = 1000000000D / TICKRATE;
     World world = new World();
-    Set<Body> planeSet= new HashSet<>();
+    Set<Body> planeSet = new HashSet<>();
 
-    Plane testPlane = new Plane();
+    PlayerPlane testPlane = new PlayerPlane();
     Drawer drawer = new Drawer();
     private boolean running = true;
     volatile Body Edge;
     private boolean[] wasPressed = {false, false, false, false};
     private boolean[] wasReleased = {false, false, false, false};
-
-
-
 
 
     public GameBase(int height, int width) {
@@ -65,10 +62,9 @@ public class GameBase implements Runnable{
         Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 0);
         Edge.setMass(MassType.INFINITE);
         world.addBody(Edge);
-
     }
-    public void testPlayer() {
 
+    public void testPlayer() {
         Rectangle rect1 = drawer.formRect(10., 50., new Vector2(25, 25), Color.BLUE);
         Rectangle rect2 = drawer.formRect(50., 10., new Vector2(25, 25), Color.BLUE);
         Rectangle rect3 = drawer.formRect(30., 10., new Vector2(25, 45), Color.GRAY);
@@ -81,23 +77,14 @@ public class GameBase implements Runnable{
         testPlane.setLinearVelocity(0, 0);
         testPlane.setMass(MassType.FIXED_ANGULAR_VELOCITY);
         testPlane.setActive(true);
-
-
-
     }
+
     public void update() {
-
-
-
-
         playerMove();
         world.update(NSPERTICK);
-
-
-
     }
-    public void addPlane(Plane plane, double x, double y, Convex[] fixtures) {
 
+    public void addPlane(Plane plane, double x, double y, Convex[] fixtures) {
         planeSet.add(plane);
         plane.translate(x, y);
         for (Convex fixture : fixtures) {
@@ -109,27 +96,24 @@ public class GameBase implements Runnable{
     public void playerMove() {
         int x = 0;
         int y = 0;
-        boolean changed = false;
+        boolean changedX = false;
+        boolean changedY = false;
         if (UserIO.movement[0]) {
             y -= 100;
-            changed = true;
+            changedY = true;
         }
         if (UserIO.movement[1]) {
             x -= 100;
-            changed = true;
+            changedX = true;
         }
         if (UserIO.movement[2]) {
             y += 100;
-            changed = true;
+            changedY = true;
         }
         if (UserIO.movement[3]) {
             x += 100;
-            changed = true;
+            changedX = true;
         }
-        if (changed) {
-            testPlane.move(x, y);
-
-        }
+        testPlane.move(x, y, changedX, changedY);
     }
-
 }
