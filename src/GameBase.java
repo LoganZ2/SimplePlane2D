@@ -16,7 +16,7 @@ public class GameBase {
     World world = new World();
     Set<Body> planeSet= new HashSet<>();
 
-    Body testPlane = new Body();
+    Plane testPlane = new Plane();
 
     Drawer drawer = new Drawer();
 
@@ -44,10 +44,9 @@ public class GameBase {
     }
     public void testPlayer() {
 
-        Rectangle rect1 = drawer.formRect(10., 50., new Vector2(25, 25), Color.BLACK);
+        Rectangle rect1 = drawer.formRect(10., 50., new Vector2(25, 25), Color.BLUE);
         Rectangle rect2 = drawer.formRect(50., 10., new Vector2(25, 25), Color.BLUE);
         Rectangle rect3 = drawer.formRect(30., 10., new Vector2(25, 45), Color.GRAY);
-
 
         Convex[] fixtures = new Convex[3];
         fixtures[0] = rect1;
@@ -58,18 +57,12 @@ public class GameBase {
         testPlane.setGravityScale(0);
 
 
-
-
-
-
-
     }
     public void update(GraphicsContext graphicsContext) {
-        testPlane.getTransform().setRotation(0);
         world.update(1.0 / 60.0);
         drawer.draw(testPlane, graphicsContext);
     }
-    public void addPlane(Body plane, double x, double y, Convex[] fixtures) {
+    public void addPlane(Plane plane, double x, double y, Convex[] fixtures) {
 
         planeSet.add(plane);
         plane.translate(x, y);
@@ -79,9 +72,7 @@ public class GameBase {
         world.addBody(plane);
     }
 
-    public void move(Body plane, double x, double y) {
 
-        plane.applyForce(new Vector2(x*1000, y*1000));
 
-    }
+
 }

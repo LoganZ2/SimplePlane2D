@@ -16,7 +16,7 @@ public class UserIO extends Application {
     private Canvas canvas = new Canvas(1280, 720);
     private Group root = new Group(canvas);
     private Scene scene = new Scene(root, 1280, 720);
-    boolean[] movement = {false, false, false, false};
+    boolean[] movement = {false, false, false, false, false};
     private GraphicsContext gc;
     GameBase base = new GameBase(height, width);
 
@@ -25,37 +25,42 @@ public class UserIO extends Application {
 
         base.testPlayer();
 
-
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W:
+                case UP:
                     movement[0] = true;
                     break;
-                case A:
+                case LEFT:
                     movement[1] = true;
                     break;
-                case S:
+                case DOWN:
                     movement[2] = true;
                     break;
-                case D:
+                case RIGHT:
                     movement[3] = true;
+                    break;
+                case SPACE:
+                    movement[4] = true;
                     break;
             }
         });
 
         scene.setOnKeyReleased(event -> {
             switch (event.getCode()) {
-                case W:
+                case UP:
                     movement[0] = false;
                     break;
-                case A:
+                case LEFT:
                     movement[1] = false;
                     break;
-                case S:
+                case DOWN:
                     movement[2] = false;
                     break;
-                case D:
+                case RIGHT:
                     movement[3] = false;
+                    break;
+                case SPACE:
+                    movement[4] = false;
                     break;
             }
         });
@@ -69,14 +74,11 @@ public class UserIO extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-
-
                 gc.setFill(Color.LAVENDER);
                 gc.fillRect(0, 0, width, height);
                 gc.setFill(Color.BLACK);
                 playerMove();
                 base.update(gc);
-
             }
         }.start();
     }
@@ -102,7 +104,7 @@ public class UserIO extends Application {
             changed = true;
         }
         if (changed)
-            base.move(base.testPlane, x, y);
+            base.testPlane.move(x, y);
 
     }
 
