@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="dyn4j-v3.3.0" level="project" />
+    <orderEntry type="library" name="dyn4j-5.0.2" level="project" />
+    <orderEntry type="library" name="dyn4j-5.0.2-javadoc" level="project" />
   </component>
 </module>

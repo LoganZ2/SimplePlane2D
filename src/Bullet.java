@@ -6,7 +6,6 @@ public class Bullet extends Body{
     public Bullet(){
         super();
         this.setBullet(true);
-
     }
     public Bullet(Body body) {
 

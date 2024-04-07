@@ -1,19 +1,19 @@
 import javafx.scene.paint.Color;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.Settings;
-import org.dyn4j.dynamics.World;
+import org.dyn4j.world.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameBase implements Runnable {
     public static final int TICKRATE = 165;
-    public static final double NSPERTICK = 1000000000D / TICKRATE;
-    World world = new World();
+    public static final long NSPERTICK = 1000000000 / TICKRATE;
+    ColorfulWorld world = new ColorfulWorld();
     Set<Body> planeSet = new HashSet<>();
-    Drawer drawer = new Drawer();
 
-    PlayerPlane testPlane = new PlayerPlane(world, drawer);
+    PlayerPlane testPlane = new PlayerPlane(world);
 
     public boolean running = true;
     volatile Body Edge;
@@ -33,21 +33,14 @@ public class GameBase implements Runnable {
 
     @Override
     public void run() {
-        int i = 0;
+        long lastUpdateTime = System.nanoTime();
         while (running) {
-            long lastTime = System.nanoTime();
-            while (running) {
-                long now = System.nanoTime();
+            long now = System.nanoTime();
+            long elapsedNs = now - lastUpdateTime;
 
-                if ((now - lastTime) > NSPERTICK) {
-                    update();
-                    lastTime += NSPERTICK;
-                    i++;
-                    if (i == 100) {
-                        testPlane.weapon.fire();
-                        i = 0;
-                    }
-                }
+            if (elapsedNs > NSPERTICK) {
+                update();
+                lastUpdateTime = now - (elapsedNs % NSPERTICK);
             }
         }
     }
@@ -68,13 +61,13 @@ public class GameBase implements Runnable {
     }
 
     public void testPlayer() {
-        Rectangle rect1 = drawer.formRect(10., 30., new Vector2(25, 15), Color.DARKVIOLET);
-        Rectangle rect2 = drawer.formRect(45., 10., new Vector2(25, 20), Color.DARKVIOLET);
-        Rectangle rect3 = drawer.formRect(15., 10., new Vector2(30, 35), Color.DARKVIOLET);
-        Rectangle rect4 = drawer.formRect(15., 10., new Vector2(20, 35), Color.DARKVIOLET);
+        Rectangle rect1 = world.drawer.formRect(10., 30., new Vector2(25, 15), Color.DARKVIOLET);
+        Rectangle rect2 = world.drawer.formRect(45., 10., new Vector2(25, 20), Color.DARKVIOLET);
+        Rectangle rect3 = world.drawer.formRect(15., 10., new Vector2(30, 35), Color.DARKVIOLET);
+        Rectangle rect4 = world.drawer.formRect(15., 10., new Vector2(20, 35), Color.DARKVIOLET);
         rect3.rotate(Math.toRadians(30), rect3.getCenter());
         rect4.rotate(Math.toRadians(330), rect4.getCenter());
-        Circle circ2 = drawer.formCircle(5., new Vector2(25, 0), Color.DARKVIOLET);
+        Circle circ2 = world.drawer.formCircle(5., new Vector2(25, 0), Color.DARKVIOLET);
         Convex[] fixtures = {rect1, rect2, rect3, rect4, circ2};
         addPlane(testPlane, 250, 250, fixtures);
         testPlane.setLinearVelocity(0, 0);
@@ -86,6 +79,10 @@ public class GameBase implements Runnable {
 
         playerMove();
         world.update(NSPERTICK);
+        List<Plane> planeList = world.getBodies().stream().filter(x -> x instanceof Plane).map(Plane.class::cast).collect(Collectors.toCollection(ArrayList::new));
+        for (Plane plane : planeList) {
+            plane.tick();
+        }
 
     }
 
@@ -118,6 +115,9 @@ public class GameBase implements Runnable {
         if (UserIO.movement[3]) {
             x += 100;
             changedX = true;
+        }
+        if (UserIO.movement[4]) {
+            testPlane.attack();
         }
         testPlane.move(x, y, changedX, changedY);
     }

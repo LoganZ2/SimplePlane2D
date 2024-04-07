@@ -1,25 +1,27 @@
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.World;
+import org.dyn4j.world.*;
 import org.dyn4j.geometry.Vector2;
 
-public class Plane extends Body {
+public abstract class Plane extends Body {
     private Vector2 firePoint = new Vector2(0, 0);
-    private World world;
-    private Drawer drawer;
-    int maxSpeed = 100;
-    MachineGun weapon;
-    public Plane(World world, Drawer drawer) {
+    private ColorfulWorld world;
+    int maxSpeed = 250;
+    int attackSpeed = 1;
+
+    private Weapon weapon;
+
+    public Plane(ColorfulWorld world) {
         super();
         this.world = world;
-        this.drawer = drawer;
-        weapon = new MachineGun(this);
     }
-
-    public World getWorld() {
+    public Weapon getWeapon() {
+        return this.weapon;
+    }
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+    public ColorfulWorld getWorld() {
         return this.world;
-    }
-    public Drawer getDrawer() {
-        return this.drawer;
     }
     public void move(double x, double y) {
         if (Math.abs(this.getLinearVelocity().x) <= maxSpeed || x * this.getLinearVelocity().x <= 0) {
@@ -30,6 +32,16 @@ public class Plane extends Body {
         }
     }
 
-    public void attack(Bullet bullet) {
+    public void attack() {
+        if (weapon.cooldown <= 0) {
+            weapon.cooldown = GameBase.TICKRATE / attackSpeed;
+            weapon.fire();
+        }
+    }
+
+    public void tick() {
+        if (weapon.cooldown > 0) {
+            weapon.cooldown--;
+        }
     }
 }

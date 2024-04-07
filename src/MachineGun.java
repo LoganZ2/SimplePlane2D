@@ -8,14 +8,10 @@ import java.util.Iterator;
 
 public class MachineGun extends Weapon{
 
-    Iterator<Bullet> iterator = bulletSet.iterator();
+    double cooldown = 0;
 
     public MachineGun(Plane plane) {
         super(plane);
-        Rectangle rect1 = plane.getDrawer().formRect(10., 30., new Vector2(0, 0), Color.DARKVIOLET);
-        Bullet b = new Bullet();
-        b.addFixture(rect1);
-        bulletSet.add(b);
     }
     @Override
     public void fire() {
@@ -24,28 +20,24 @@ public class MachineGun extends Weapon{
     @Override
     public void AI() {
 
-        if (iterator.hasNext()) {
-            Bullet bullet = iterator.next();
-            Bullet b = new Bullet(bullet);
-            b.setMass(MassType.NORMAL);
-            b.addFixture(this.getAttached().getDrawer().formCircle(5., b.getLocalCenter(), Color.AQUA));
-            Vector2 vel1 = new Vector2(this.getAttached().getLocalCenter().getXComponent());
-            vel1 = this.getAttached().getWorldPoint(vel1);
-            Vector2 vel2 = new Vector2(this.getAttached().getLocalCenter());
-            vel2 = this.getAttached().getWorldPoint(vel2);
-            vel2 = vel1.subtract(vel2);
-            vel2.multiply(10);
+        Bullet b = new NormalBullet(this);
+        b.setMass(MassType.NORMAL);
 
-            b.setLinearVelocity(vel2);
-            Vector2 pos = this.getAttached().getWorldPoint(new Vector2(0, -50));
-            b.translate(pos);
-            b.translate(this.getAttached().getWorldCenter().x - b.getWorldCenter().x, 0);
-            b.getTransform().setRotation(this.getAttached().getTransform().getRotation());
-            this.getAttached().getWorld().addBody(b);
+        Vector2 vel1 = new Vector2(this.getAttached().getLocalCenter().getXComponent());
+        vel1 = this.getAttached().getWorldPoint(vel1);
+        Vector2 vel2 = new Vector2(this.getAttached().getLocalCenter());
+        vel2 = this.getAttached().getWorldPoint(vel2);
+        vel2 = vel1.subtract(vel2);
+        vel2.multiply(10);
 
-        } else {
-            iterator = bulletSet.iterator();
-        }
+        b.setLinearVelocity(vel2);
+        Vector2 pos = this.getAttached().getWorldPoint(new Vector2(0, -50));
+        b.translate(pos);
+        b.translate(this.getAttached().getWorldCenter().x - b.getWorldCenter().x, 0);
+        b.getTransform().setRotation(this.getAttached().getTransform().getRotation());
+        this.getAttached().getWorld().addBody(b);
+
+
     }
 
 }

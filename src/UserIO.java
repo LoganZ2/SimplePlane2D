@@ -105,7 +105,7 @@ public class UserIO extends Application {
                 gc.setFill(Color.BLACK);
                 int i = 0;
                 for (Body body :base.world.getBodies()) {
-                    base.drawer.draw(body, gc);
+                    base.world.drawer.draw(body, gc);
                 }
             }
         }.start();
