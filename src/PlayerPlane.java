@@ -1,6 +1,10 @@
+import org.dyn4j.dynamics.World;
 import org.dyn4j.geometry.Vector2;
 
 public class PlayerPlane extends Plane {
+    public PlayerPlane(World world, Drawer drawer) {
+        super(world, drawer);
+    }
     public void move(double x, double y, boolean changedX, boolean changedY) {
         if (Math.abs(this.getLinearVelocity().x) <= maxSpeed || x * this.getLinearVelocity().x <= 0) {
             this.applyForce(new Vector2(x * 5000, 0));

@@ -1,4 +1,5 @@
 import javafx.scene.paint.Color;
+import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.Settings;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.dynamics.Body;
@@ -6,14 +7,15 @@ import org.dyn4j.geometry.*;
 import java.util.*;
 
 public class GameBase implements Runnable {
-    public static final int TICKRATE = 280;
+    public static final int TICKRATE = 165;
     public static final double NSPERTICK = 1000000000D / TICKRATE;
     World world = new World();
     Set<Body> planeSet = new HashSet<>();
-
-    PlayerPlane testPlane = new PlayerPlane();
     Drawer drawer = new Drawer();
-    private boolean running = true;
+
+    PlayerPlane testPlane = new PlayerPlane(world, drawer);
+
+    public boolean running = true;
     volatile Body Edge;
     private boolean[] wasPressed = {false, false, false, false};
     private boolean[] wasReleased = {false, false, false, false};
@@ -26,17 +28,25 @@ public class GameBase implements Runnable {
         Settings set = new Settings();
         set.setMaximumTranslation(6.5);
         world.setSettings(set);
+
     }
 
     @Override
     public void run() {
+        int i = 0;
         while (running) {
             long lastTime = System.nanoTime();
             while (running) {
                 long now = System.nanoTime();
+
                 if ((now - lastTime) > NSPERTICK) {
                     update();
                     lastTime += NSPERTICK;
+                    i++;
+                    if (i == 100) {
+                        testPlane.weapon.fire();
+                        i = 0;
+                    }
                 }
             }
         }
@@ -49,10 +59,10 @@ public class GameBase implements Runnable {
         Vector2 bottomRight = new Vector2(width, height);
 
         Edge = new Body();
-        Edge.addFixture(new Segment(topLeft, topRight), 0.1, 0.0, 0);
-        Edge.addFixture(new Segment(bottomLeft, bottomRight), 0.1, 0.0, 0);
-        Edge.addFixture(new Segment(topLeft, bottomLeft), 0.1, 0.0, 0);
-        Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(topLeft, topRight), 0.1, 0.0, 1);
+        Edge.addFixture(new Segment(bottomLeft, bottomRight), 0.1, 0.0, 1);
+        Edge.addFixture(new Segment(topLeft, bottomLeft), 0.1, 0.0, 1);
+        Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 1);
         Edge.setMass(MassType.INFINITE);
         world.addBody(Edge);
     }
@@ -69,12 +79,14 @@ public class GameBase implements Runnable {
         addPlane(testPlane, 250, 250, fixtures);
         testPlane.setLinearVelocity(0, 0);
         testPlane.setMass(MassType.FIXED_ANGULAR_VELOCITY);
-        testPlane.setActive(true);
+
     }
 
     public void update() {
+
         playerMove();
         world.update(NSPERTICK);
+
     }
 
     public void addPlane(Plane plane, double x, double y, Convex[] fixtures) {

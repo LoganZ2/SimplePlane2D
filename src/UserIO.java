@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.scene.Group;
+import org.dyn4j.dynamics.Body;
 
 public class UserIO extends Application {
     public static int height = 1080;
@@ -25,6 +26,8 @@ public class UserIO extends Application {
         root.getTransforms().add(scale);
         scale.xProperty().bind(Bindings.divide(scene.widthProperty(), width));
         scale.yProperty().bind(Bindings.divide(scene.heightProperty(), height));
+
+
 
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -90,13 +93,20 @@ public class UserIO extends Application {
         Thread gameThread = new Thread(base);
         gameThread.start();
 
+        primaryStage.setOnCloseRequest(event -> {
+            base.running = false;
+        });
+
         new AnimationTimer() {
             @Override
             public void handle(long now) {
                 gc.setFill(Color.LAVENDER);
                 gc.fillRect(0, 0, width, height);
                 gc.setFill(Color.BLACK);
-                base.drawer.draw(base.testPlane, gc);
+                int i = 0;
+                for (Body body :base.world.getBodies()) {
+                    base.drawer.draw(body, gc);
+                }
             }
         }.start();
     }

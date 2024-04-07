@@ -39,7 +39,7 @@ public class Drawer {
             graphicsContext.setFill(colorMap.getOrDefault(shape, Color.BLACK));
             if (shape instanceof Circle) {
                 Circle circle = (Circle) shape;
-                Vector2 center = body.getWorldCenter().add(circle.getCenter()).subtract(body.getLocalCenter());
+                Vector2 center = body.getWorldPoint(circle.getCenter());
                 double radius = circle.getRadius();
                 graphicsContext.fillOval(center.x - radius, center.y - radius, radius * 2, radius * 2);
             } else if (shape instanceof Segment) {
