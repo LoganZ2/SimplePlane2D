@@ -14,6 +14,7 @@ public class Drawer {
         rect.translate(translation);
         return rect;
     }
+
     public Circle formCircle(Double radius, Vector2 translation, Color color) {
         Circle circ = new Circle(radius);
         colorMap.put(circ, color);

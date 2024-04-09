@@ -1,8 +1,5 @@
 import javafx.scene.paint.Color;
-import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.MassType;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
+import org.dyn4j.geometry.*;
 
 import java.util.Iterator;
 
@@ -12,6 +9,7 @@ public class MachineGun extends Weapon{
 
     public MachineGun(Plane plane) {
         super(plane);
+        attackSpeed = 7;
     }
     @Override
     public void fire() {
@@ -20,7 +18,7 @@ public class MachineGun extends Weapon{
     @Override
     public void AI() {
 
-        Bullet b = new NormalBullet(this);
+        NormalBullet b = new NormalBullet(this);
         b.setMass(MassType.NORMAL);
 
         Vector2 vel1 = new Vector2(this.getAttached().getLocalCenter().getXComponent());
@@ -28,13 +26,27 @@ public class MachineGun extends Weapon{
         Vector2 vel2 = new Vector2(this.getAttached().getLocalCenter());
         vel2 = this.getAttached().getWorldPoint(vel2);
         vel2 = vel1.subtract(vel2);
-        vel2.multiply(10);
+        vel2.multiply(30000);
 
         b.setLinearVelocity(vel2);
-        Vector2 pos = this.getAttached().getWorldPoint(new Vector2(0, -50));
-        b.translate(pos);
-        b.translate(this.getAttached().getWorldCenter().x - b.getWorldCenter().x, 0);
-        b.getTransform().setRotation(this.getAttached().getTransform().getRotation());
+
+        Rotation planeRotation = this.getAttached().getTransform().getRotation();
+
+        Vector2 planeLocalCenter = this.getAttached().getLocalCenter();
+        Vector2 planeWorldCenter = this.getAttached().getWorldCenter();
+        Vector2 planeLocalTop = planeLocalCenter.getXComponent();
+        Vector2 planeWorldTop = this.getAttached().getWorldPoint(planeLocalTop);
+
+        Vector2 bulletLocalPosition = new Vector2(planeLocalTop.add(0, -b.height / 2 - 10));
+
+
+        Vector2 bulletWorldPosition = this.getAttached().getWorldPoint(bulletLocalPosition);
+
+        b.translate(bulletWorldPosition);
+
+        b.rotate(planeRotation, b.getWorldCenter());
+
+
         this.getAttached().getWorld().addBody(b);
 
 

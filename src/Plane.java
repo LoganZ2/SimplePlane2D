@@ -3,16 +3,23 @@ import org.dyn4j.world.*;
 import org.dyn4j.geometry.Vector2;
 
 public abstract class Plane extends Body {
+    private int health = 100;
     private Vector2 firePoint = new Vector2(0, 0);
     private ColorfulWorld world;
-    int maxSpeed = 250;
-    int attackSpeed = 1;
+    int maxSpeed = 200;
+
 
     private Weapon weapon;
 
     public Plane(ColorfulWorld world) {
         super();
         this.world = world;
+    }
+    public int getHealth() {
+        return this.health;
+    }
+    public void setHealth(int health) {
+        this.health = health;
     }
     public Weapon getWeapon() {
         return this.weapon;
@@ -34,7 +41,7 @@ public abstract class Plane extends Body {
 
     public void attack() {
         if (weapon.cooldown <= 0) {
-            weapon.cooldown = GameBase.TICKRATE / attackSpeed;
+            weapon.cooldown = GameBase.TICKRATE / weapon.attackSpeed;
             weapon.fire();
         }
     }
@@ -43,5 +50,6 @@ public abstract class Plane extends Body {
         if (weapon.cooldown > 0) {
             weapon.cooldown--;
         }
+
     }
 }

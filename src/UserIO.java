@@ -16,7 +16,7 @@ public class UserIO extends Application {
     private Canvas canvas = new Canvas(width, height);
     private Group root = new Group(canvas);
     private Scene scene = new Scene(root, width, height);
-    volatile static boolean[] movement = {false, false, false, false, false};
+    volatile static boolean[] movement = {false, false, false, false, false, false, false};
     private GraphicsContext gc;
     GameBase base = new GameBase(height, width);
 
@@ -31,20 +31,26 @@ public class UserIO extends Application {
 
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case UP:
+                case W:
                     movement[0] = true;
                     break;
-                case LEFT:
+                case A:
                     movement[1] = true;
                     break;
-                case DOWN:
+                case S:
                     movement[2] = true;
                     break;
-                case RIGHT:
+                case D:
                     movement[3] = true;
                     break;
                 case SPACE:
                     movement[4] = true;
+                    break;
+                case Q:
+                    movement[5] = true;
+                    break;
+                case E:
+                    movement[6] = true;
                     break;
                 case F11:
                     primaryStage.setFullScreen(true);
@@ -64,20 +70,26 @@ public class UserIO extends Application {
 
         scene.setOnKeyReleased(event -> {
             switch (event.getCode()) {
-                case UP:
+                case W:
                     movement[0] = false;
                     break;
-                case LEFT:
+                case A:
                     movement[1] = false;
                     break;
-                case DOWN:
+                case S:
                     movement[2] = false;
                     break;
-                case RIGHT:
+                case D:
                     movement[3] = false;
                     break;
                 case SPACE:
                     movement[4] = false;
+                    break;
+                case Q:
+                    movement[5] = false;
+                    break;
+                case E:
+                    movement[6] = false;
                     break;
             }
         });

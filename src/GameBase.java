@@ -14,11 +14,12 @@ public class GameBase implements Runnable {
     Set<Body> planeSet = new HashSet<>();
 
     PlayerPlane testPlane = new PlayerPlane(world);
+    Body t;
 
     public boolean running = true;
     volatile Body Edge;
-    private boolean[] wasPressed = {false, false, false, false};
-    private boolean[] wasReleased = {false, false, false, false};
+    TestBody b = new TestBody(world);
+    private BulletAttackListener bulletAttackListener = new BulletAttackListener();
 
 
     public GameBase(int height, int width) {
@@ -26,9 +27,10 @@ public class GameBase implements Runnable {
         setEdge(height, width);
         world.setGravity(new Vector2(0.0, 0));
         Settings set = new Settings();
-        set.setMaximumTranslation(6.5);
-        world.setSettings(set);
+        set.setMaximumTranslation(10);
 
+        world.setSettings(set);
+        world.addContactListener(bulletAttackListener);
     }
 
     @Override
@@ -52,10 +54,10 @@ public class GameBase implements Runnable {
         Vector2 bottomRight = new Vector2(width, height);
 
         Edge = new Body();
-        Edge.addFixture(new Segment(topLeft, topRight), 0.1, 0.0, 1);
-        Edge.addFixture(new Segment(bottomLeft, bottomRight), 0.1, 0.0, 1);
-        Edge.addFixture(new Segment(topLeft, bottomLeft), 0.1, 0.0, 1);
-        Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 1);
+        Edge.addFixture(new Segment(topLeft, topRight), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(bottomLeft, bottomRight), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(topLeft, bottomLeft), 0.1, 0.0, 0);
+        Edge.addFixture(new Segment(topRight, bottomRight), 0.1, 0.0, 0);
         Edge.setMass(MassType.INFINITE);
         world.addBody(Edge);
     }
@@ -69,20 +71,47 @@ public class GameBase implements Runnable {
         rect4.rotate(Math.toRadians(330), rect4.getCenter());
         Circle circ2 = world.drawer.formCircle(5., new Vector2(25, 0), Color.DARKVIOLET);
         Convex[] fixtures = {rect1, rect2, rect3, rect4, circ2};
-        addPlane(testPlane, 250, 250, fixtures);
+        addPlane(testPlane, 250, 600, fixtures);
         testPlane.setLinearVelocity(0, 0);
-        testPlane.setMass(MassType.FIXED_ANGULAR_VELOCITY);
+        testPlane.getTransform().setRotation(Math.toRadians(0));
+        testPlane.setMass(MassType.NORMAL);
+
+        Circle circ3 = world.drawer.formCircle(5., new Vector2(0, 0), Color.DARKVIOLET);
+        b.addFixture(circ3);
+        b.setMass(MassType.INFINITE);
+
+
+
+
+
+
+
+
+
+
+
 
     }
 
     public void update() {
 
+
+
         playerMove();
-        world.update(NSPERTICK);
+        for (Body body : bulletAttackListener.bulletObliterate) {
+            world.removeBody(body);
+        }
         List<Plane> planeList = world.getBodies().stream().filter(x -> x instanceof Plane).map(Plane.class::cast).collect(Collectors.toCollection(ArrayList::new));
         for (Plane plane : planeList) {
             plane.tick();
         }
+
+
+
+
+        world.update(NSPERTICK);
+
+
 
     }
 
@@ -90,35 +119,26 @@ public class GameBase implements Runnable {
         planeSet.add(plane);
         plane.translate(x, y);
         for (Convex fixture : fixtures) {
-            plane.addFixture(fixture);
+            plane.addFixture(fixture, 1, 1, 0);
         }
         world.addBody(plane);
     }
 
     public void playerMove() {
-        int x = 0;
-        int y = 0;
-        boolean changedX = false;
-        boolean changedY = false;
-        if (UserIO.movement[0]) {
-            y -= 100;
-            changedY = true;
+
+        // 检测前进动作并向前加速
+        if (UserIO.movement[0]) { // 假设数组索引0代表前进的动作
+            testPlane.move(1); // 向前加速，参数1代表向前的方向
         }
-        if (UserIO.movement[1]) {
-            x -= 100;
-            changedX = true;
-        }
-        if (UserIO.movement[2]) {
-            y += 100;
-            changedY = true;
-        }
-        if (UserIO.movement[3]) {
-            x += 100;
-            changedX = true;
-        }
-        if (UserIO.movement[4]) {
+        // 检测攻击动作
+        if (UserIO.movement[4]) { // 假设数组索引4代表攻击动作
             testPlane.attack();
         }
-        testPlane.move(x, y, changedX, changedY);
+
+        // 检测并执行倾斜动作
+        testPlane.tilt(3, UserIO.movement[1], UserIO.movement[3]);
+
     }
+
+
 }

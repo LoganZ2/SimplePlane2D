@@ -1,4 +1,5 @@
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.*;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
@@ -24,11 +25,17 @@ public class ColorfulWorld extends World<Body> {
     @Override
     public boolean update(double elapsedTime) {
 
+        for (Body body : this.getBodies()) {
+            body.applyForce(body.getLinearVelocity().copy().multiply(-500));
+        }
+
         List<Plane> planeList = this.getBodies().stream().filter(x -> x instanceof Plane).map(Plane.class::cast).collect(Collectors.toCollection(ArrayList::new));
         for (Plane plane : planeList) {
             plane.tick();
         }
+
         return super.update(elapsedTime);
+
     }
     @Override
     public boolean update(double elapsedTime, int steps) {
